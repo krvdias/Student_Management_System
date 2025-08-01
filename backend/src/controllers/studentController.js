@@ -22,7 +22,7 @@ const studentController = {
 
             const existingClass = await Class.findByPk(classes);
             if (!existingClass) {
-                return res.status(409).json({ message: `There is no any class in this id` });
+                return res.status(404).json({ message: `There is no any class in this id` });
             }
 
             // Date validation

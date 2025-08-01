@@ -20,6 +20,10 @@ const Marks = sequelize.define('Marks', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    grade: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     subject: {
         type: DataTypes.INTEGER,
         allowNull: true,

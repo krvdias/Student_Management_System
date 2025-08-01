@@ -12,6 +12,10 @@ const GPA = sequelize.define('GPA', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    term: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     count: {
         type: DataTypes.STRING,
         allowNull: false,

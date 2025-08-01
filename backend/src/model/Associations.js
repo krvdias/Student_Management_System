@@ -4,7 +4,7 @@ const Class = require('./ClassModel');
 const Subjects = require('./SubjectModel');
 const Marks = require('./MarksModel');
 const GPA = require('./GPAModel');
-const Avarage = require('./AverageModel');
+const Avarage = require('./AvarageModel');
 const Fees = require('./FeesModel');
 const StudentFees = require('./StudentFeesModel');
 

@@ -31,3 +31,158 @@ export function formatMobileNumber(mobile) {
     // For any other format, return as digits only (or handle error)
     return digitsOnly.length > 11 ? digitsOnly.substring(0, 11) : digitsOnly;
 };
+
+export function GPACalculator(mark, subjectCount, gpa) {
+    if (!mark) return null;
+    // Convert mark to float
+    const numericMark = parseFloat(mark);
+    const subjects = parseFloat(subjectCount);
+    const existingGPA = parseFloat(gpa);
+    
+    // Determine the grade and its value
+    let gradeValue = 0;
+    
+    if (numericMark >= 80 && numericMark <= 100) {
+        gradeValue = 4; // A
+    } else if (numericMark >= 65 && numericMark < 80) {
+        gradeValue = 3; // B
+    } else if (numericMark >= 50 && numericMark < 65) {
+        gradeValue = 2; // C
+    } else if (numericMark >= 35 && numericMark < 50) {
+        gradeValue = 1; // D
+    } else if (numericMark >= 29 && numericMark < 35) {
+        gradeValue = 0; // E
+    } else if (numericMark >= 0 && numericMark < 29) {
+        gradeValue = 0; // U
+    }
+    
+    // If grade value is 0, ignore this mark (return existing GPA)
+    if (gradeValue === 0) {
+        return gpa;
+    }
+    
+    // Calculate new GPA
+    const calculatedGPA = gradeValue / subjects;
+    const newGPA = existingGPA + calculatedGPA;
+    
+    return newGPA;
+};
+
+export function gradeGenerator(mark) {
+    if (!mark) return null;
+
+    // Convert mark to float
+    const numericMark = parseFloat(mark);
+
+    let grade = '';
+    if (numericMark >= 80 && numericMark <= 100) {
+        grade = 'A'; 
+    } else if (numericMark >= 65 && numericMark < 80) {
+        grade = 'B';
+    } else if (numericMark >= 50 && numericMark < 65) {
+        grade = 'C'; 
+    } else if (numericMark >= 35 && numericMark < 50) {
+        grade = 'D';
+    } else if (numericMark >= 29 && numericMark < 35) {
+        grade = 'E';
+    } else if (numericMark >= 0 && numericMark < 29) {
+        grade = 'U';
+    }
+
+    return grade;
+};
+
+export function GPACalculatorUpdate(mark, oldMark, subjectCount, gpa) {
+    // Convert mark to float
+    const numericMark = parseFloat(mark);
+    const numericOldMark = parseFloat(oldMark);
+    const subjects = parseFloat(subjectCount);
+    const existingGPA = parseFloat(gpa);
+
+    let oldGradeValue = 0;
+    if (numericOldMark >= 80 && numericOldMark <= 100) {
+        oldGradeValue = 4; // A
+    } else if (numericOldMark >= 65 && numericOldMark < 80) {
+        oldGradeValue = 3; // B
+    } else if (numericOldMark >= 50 && numericOldMark < 65) {
+        oldGradeValue = 2; // C
+    } else if (numericOldMark >= 35 && numericOldMark < 50) {
+        oldGradeValue = 1; // D
+    } else if (numericOldMark >= 29 && numericOldMark < 35) {
+        oldGradeValue = 0; // E
+    } else if (numericOldMark >= 0 && numericOldMark < 29) {
+        oldGradeValue = 0; // U
+    }
+
+    if (oldGradeValue !== 0) {
+        const oldGPA = oldGradeValue / subjectCount;
+        const changedGPA = existingGPA - oldGPA; 
+
+        // Determine the grade and its value
+        let gradeValue = 0;
+        
+        if (numericMark >= 80 && numericMark <= 100) {
+            gradeValue = 4; // A
+        } else if (numericMark >= 65 && numericMark < 80) {
+            gradeValue = 3; // B
+        } else if (numericMark >= 50 && numericMark < 65) {
+            gradeValue = 2; // C
+        } else if (numericMark >= 35 && numericMark < 50) {
+            gradeValue = 1; // D
+        } else if (numericMark >= 29 && numericMark < 35) {
+            gradeValue = 0; // E
+        } else if (numericMark >= 0 && numericMark < 29) {
+            gradeValue = 0; // U
+        }
+        
+        // If grade value is 0, ignore this mark (return existing GPA)
+        if (gradeValue === 0) {
+            return changedGPA;
+        }
+        
+        // Calculate new GPA
+        const calculatedGPA = gradeValue / subjects;
+        const newGPA = changedGPA + calculatedGPA;
+        
+        return newGPA;
+    }
+};
+
+export function avarageCalculator(mark, subjectCount, avarage) {
+    if(!mark) return null;
+
+    const numericMark = parseFloat(mark);
+    const subjects = parseFloat(subjectCount);
+    const existingAvarage = parseFloat(avarage);
+
+    if (numericMark === 0) {
+        return avarage;
+    }
+
+    const calculatedAvarage = numericMark / subjects;
+    const newAvarage = existingAvarage + calculatedAvarage;
+
+    return newAvarage;
+};
+
+export function avarageCalculatUpdate(mark, oldMark, subjectCount, avarage) {
+
+    const numericMark = parseFloat(mark);
+    const numaricOldMark = parseFloat(oldMark);
+    const subjects = parseFloat(subjectCount);
+    const existingAvarage = parseFloat(avarage);
+
+    if (numaricOldMark !== 0) {
+        const oldAvarage = numaricOldMark / subjects;
+        const changeAvarage = existingAvarage - oldAvarage;
+
+        if (numericMark === 0) {
+            return changeAvarage;
+        }
+
+        const calculatedAvarage = numericMark / subjects;
+        const newAvarage = changeAvarage + calculatedAvarage;
+
+        return newAvarage;
+    }
+};

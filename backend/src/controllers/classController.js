@@ -1,12 +1,15 @@
 const Class = require('../model/ClassModel');
+const Teachers = require('../model/TeacherModel');
+const { Op } = require('sequelize');
+
 
 const classController = {
 
     async addClass(req, res) {
         try {
-            const {name, year} = req.body;
+            const {name, year, subjectCount} = req.body;
 
-            if (!name || !year) {
+            if (!name || !year || !subjectCount) {
                 return res.status(400).json({ message: "All fields are required." });
             }
 
@@ -17,7 +20,8 @@ const classController = {
 
             const newClass = await Class.create({
                 name,
-                year
+                year,
+                subjectCount
             });
 
             res.status(201).json({
@@ -28,6 +32,62 @@ const classController = {
         } catch (error) {
             console.error('Class adding error:', error);
             res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
+    async searchClass(req, res) {
+        try {
+            const { searchTerm } = req.body;
+
+            let whereCondition = {};
+
+            if (searchTerm && searchTerm.trim() !== "") {
+                whereCondition = {
+                    [Op.or]: [
+                        { name: { [Op.like]: `%${searchTerm}%` } } // Added % at both ends for better search
+                    ]
+                };
+            }
+
+            const classes = await Class.findAll({
+                where: whereCondition,
+                include: [
+                    {
+                        model: Teachers,
+                        as: 'teacherClass',  // Using the association alias
+                        attributes: ['id', 'first_name', 'last_name'],
+                        required: false // Left join to include classes without teachers
+                    }
+                ],
+                order: [
+                    ['name', 'ASC'] // Order classes alphabetically
+                ]
+            });
+
+            // Format the response data
+            const formattedClasses = classes.map(classItem => ({
+                id: classItem.id,
+                name: classItem.name,
+                year: classItem.year,
+                teacher: classItem.teacherClass ? {
+                    id: classItem.teacherClass.id,
+                    name: `${classItem.teacherClass.first_name} ${classItem.teacherClass.last_name}`
+                } : null
+            }));
+
+            res.status(200).json({
+                success: true,
+                message: searchTerm ? "Classes fetched with search term" : "All classes fetched",
+                data: formattedClasses
+            });
+
+        } catch (error) {
+            console.error("Error searching classes:", error);
+            res.status(500).json({
+                success: false,
+                message: "Internal server error",
+                error: error.message
+            });
         }
     },
 
@@ -49,7 +109,7 @@ const classController = {
     async editClass(req, res) {
         try {
             const { id } = req.params;
-            const {name, year} = req.body;
+            const {name, year, subjectCount} = req.body;
 
             const chekClass = await Class.findByPk(id);
             if(!chekClass) {
@@ -59,6 +119,7 @@ const classController = {
             const updateClass = {};
             if (name) updateClass.name = name;
             if (year) updateClass.year = year;
+            if (subjectCount) updateClass.subject_count = subjectCount;
 
             // Check if at least one field is being updated
             if (Object.keys(updateClass).length === 0) {
@@ -79,7 +140,7 @@ const classController = {
                 success: true,
                 message: "Class updated successfully!",
                 data: editedClass
-            })
+            });
         } catch (error) {
             console.error('Error updating class:', error);
             res.status(500).json({ message: 'Internal server error' });

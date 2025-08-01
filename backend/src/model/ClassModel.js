@@ -15,6 +15,10 @@ const Class = sequelize.define('Class', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    subject_count: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
     tableName: 'sms_class',

@@ -7,6 +7,8 @@ const eventController = require('../controllers/eventController');
 const studentController = require('../controllers/studentController');
 const classController = require('../controllers/classController');
 const teacherController = require('../controllers/teacherController');
+const markController = require('../controllers/markController');
+const subjectController = require('../controllers/subjectController');
 
 //Auth routes
 router.post('/login', authController.login);
@@ -32,6 +34,7 @@ router.delete('/deleteStudent/:id', authMiddleware.verifyAdminUser, studentContr
 
 //Class routes
 router.post('/addClass', authMiddleware.verifyAdminUser, classController.addClass);
+router.post('/searchClass', authMiddleware.verifyAdminUser, classController.searchClass);
 router.get('/getClasses', authMiddleware.verifyAdminUser, classController.getClass);
 router.put('/editClass/:id', authMiddleware.verifyAdminUser, classController.editClass);
 router.delete('/deleteClass/:id', authMiddleware.verifyAdminUser, classController.deleteClass);
@@ -42,6 +45,20 @@ router.post('/searchTeachers', authMiddleware.verifyAdminUser, teacherController
 router.put('/editTeacher/:id', authMiddleware.verifyAdminUser, teacherController.editTeacher);
 router.delete('/deleteTeacher/:id', authMiddleware.verifyAdminUser, teacherController.deleteTeacher);
 
+//Marks routes
+router.post('/addMark', authMiddleware.verifyAdminUser, markController.addMark);
+router.post('/addStudentMark/:id', authMiddleware.verifyAdminUser, markController.addStudentMark);
+router.post('/markSummery', authMiddleware.verifyAdminUser, markController.fetchMarks);
+router.post('/getMarks', authMiddleware.verifyAdminUser, markController.getLatestMarks);
+router.post('/getAllMarks', authMiddleware.verifyAdminUser, markController.getAllMarks);
+router.put('/editMark/:id', authMiddleware.verifyAdminUser, markController.editMark);
+router.delete('/deleteMark/:id', authMiddleware.verifyAdminUser, markController.deleteMark);
 
+//Subject routes
+router.post('/addSubject', authMiddleware.verifyAdminUser, subjectController.addSubject);
+router.post('/searchSubject', authMiddleware.verifyAdminUser, subjectController.searchSubject);
+router.get('/getSubjects', authMiddleware.verifyAdminUser, subjectController.getSubjects);
+router.put('/editsubject/:id', authMiddleware.verifyAdminUser, subjectController.editSubject);
+router.delete('/deleteSubject/:id', authMiddleware.verifyAdminUser, subjectController.deleteSubject);
 
 module.exports = router;
