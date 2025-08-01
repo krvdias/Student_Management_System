@@ -1,29 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
+const dashboardController = require('../controllers/dashboardController');
+const eventController = require('../controllers/eventController');
+const studentController = require('../controllers/studentController');
+const classController = require('../controllers/classController');
+const teacherController = require('../controllers/teacherController');
 
-router.post('/login', adminController.login);
-router.post('/refreshToken', adminController.renewToken);
-router.post('/logout', authMiddleware.verifyAdminUser, adminController.logout);
-router.post('/register', adminController.register);
+//Auth routes
+router.post('/login', authController.login);
+router.post('/refreshToken', authController.renewToken);
+router.post('/logout', authMiddleware.verifyAdminUser, authController.logout);
+router.post('/register', authController.register);
 
-router.get('/summary', authMiddleware.verifyAdminUser, adminController.getSummary);
+//Dashboard summery routes
+router.get('/summary', authMiddleware.verifyAdminUser, dashboardController.getSummary);
 
-router.post('/addEvent', authMiddleware.verifyAdminUser, adminController.addEvent);
-router.get('/getEvents', authMiddleware.verifyAdminUser, adminController.getEvents);
-router.put('/editEvent/:id', authMiddleware.verifyAdminUser, adminController.editEvent);
-router.delete('/deleteEvent/:id', authMiddleware.verifyAdminUser, adminController.deleteEvent);
+//Event routes
+router.post('/addEvent', authMiddleware.verifyAdminUser, eventController.addEvent);
+router.get('/getEvents', authMiddleware.verifyAdminUser, eventController.getEvents);
+router.put('/editEvent/:id', authMiddleware.verifyAdminUser, eventController.editEvent);
+router.delete('/deleteEvent/:id', authMiddleware.verifyAdminUser, eventController.deleteEvent);
 
-router.post('/addStudent', authMiddleware.verifyAdminUser, adminController.addStudent);
-router.post('/fetchStudents', authMiddleware.verifyAdminUser, adminController.fetchStudents);
-router.get('/getStudent/:id', authMiddleware.verifyAdminUser, adminController.getStudent);
-router.put('/editStudent/:id', authMiddleware.verifyAdminUser, adminController.editStudent);
-router.delete('/deleteStudent/:id', authMiddleware.verifyAdminUser, adminController.deleteStudent);
+//Student routes
+router.post('/addStudent', authMiddleware.verifyAdminUser, studentController.addStudent);
+router.post('/fetchStudents', authMiddleware.verifyAdminUser, studentController.fetchStudents);
+router.get('/getStudent/:id', authMiddleware.verifyAdminUser, studentController.getStudent);
+router.put('/editStudent/:id', authMiddleware.verifyAdminUser, studentController.editStudent);
+router.delete('/deleteStudent/:id', authMiddleware.verifyAdminUser, studentController.deleteStudent);
 
-router.post('/addClass', authMiddleware.verifyAdminUser, adminController.addClass);
-router.get('/getClasses', authMiddleware.verifyAdminUser, adminController.getClass);
-router.put('/editClass/:id', authMiddleware.verifyAdminUser, adminController.editClass);
-router.delete('/deleteClass/:id', authMiddleware.verifyAdminUser, adminController.deleteClass);
+//Class routes
+router.post('/addClass', authMiddleware.verifyAdminUser, classController.addClass);
+router.get('/getClasses', authMiddleware.verifyAdminUser, classController.getClass);
+router.put('/editClass/:id', authMiddleware.verifyAdminUser, classController.editClass);
+router.delete('/deleteClass/:id', authMiddleware.verifyAdminUser, classController.deleteClass);
+
+//Teacher routes
+router.post('/addTeacher', authMiddleware.verifyAdminUser, teacherController.addTeacher);
+router.post('/searchTeachers', authMiddleware.verifyAdminUser, teacherController.searchTeacher);
+router.put('/editTeacher/:id', authMiddleware.verifyAdminUser, teacherController.editTeacher);
+router.delete('/deleteTeacher/:id', authMiddleware.verifyAdminUser, teacherController.deleteTeacher);
+
+
 
 module.exports = router;
