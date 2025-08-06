@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 
 const eventController = {
 
-        async addEvent(req, res) {
+    async addEvent(req, res) {
         try {
             const { title, coordinator, event_date } = req.body;
 

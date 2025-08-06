@@ -10,7 +10,7 @@ const StudentFees = sequelize.define('StudentFees', {
     },
     bill_id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     student: {
         type: DataTypes.INTEGER,
@@ -22,11 +22,7 @@ const StudentFees = sequelize.define('StudentFees', {
     },
     fees: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'sms_fees',
-            key: 'id'
-        }
+        allowNull: true,
     },
     term: {
         type: DataTypes.STRING,
@@ -34,7 +30,7 @@ const StudentFees = sequelize.define('StudentFees', {
     },
     method: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     status: {
         type: DataTypes.STRING,
@@ -42,7 +38,7 @@ const StudentFees = sequelize.define('StudentFees', {
     },
     payed_date: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     }
 }, {
     tableName: 'sms_student_fees',

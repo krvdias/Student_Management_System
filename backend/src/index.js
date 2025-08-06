@@ -5,6 +5,7 @@ const cors = require('cors');
 const adminRoutes = require('./routes/adminRoutes');
 const Admin = require('./model/AdminModel');
 require('./model/Associations');
+const startPaymentStatusCronJob = require('./auto/crons');
 
 const origine = process.env.FRONTEND_ORINGINE;
 const PORT = 3010;
@@ -73,6 +74,8 @@ class App {
         try {
             await this.initializeDatabase();
             await this.initializeAdmin();
+
+            startPaymentStatusCronJob();
 
             this.app.listen(this.port, () => {
                 console.log(`Server is running on port ${this.port}`);

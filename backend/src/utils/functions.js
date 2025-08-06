@@ -186,3 +186,38 @@ export function avarageCalculatUpdate(mark, oldMark, subjectCount, avarage) {
         return newAvarage;
     }
 };
+
+export function calculateFees(amount, discount) {
+    const numaricAmount = parseFloat(amount);
+
+    //if there is no discount return same amount
+    if (!discount) {
+        return numaricAmount;
+    }
+
+    const numaricDiscount = parseInt(discount);
+
+    //calculate discounted amount accoding to discount precentage
+    const discountAmount = (numaricAmount * numaricDiscount) / 100;
+
+    //get final amount 
+    const finalAmount = numaricAmount - discountAmount;
+
+    return finalAmount;
+}
+
+export function checkCurrentTerm() {
+    const today = new Date();
+    const month = today.getMonth() + 1; // JavaScript months are 0-indexed (0-11)
+    
+    if (month >= 9 && month <= 12) { // September - December
+        return "1st Term";
+    } else if (month >= 1 && month <= 4) { // January - April
+        return "2nd Term";
+    } else if (month >= 5 && month <= 8) { // May - August
+        return "3rd Term";
+    } else {
+        // This shouldn't happen as all months are covered, but just in case
+        return "Unknown Term";
+    }
+}

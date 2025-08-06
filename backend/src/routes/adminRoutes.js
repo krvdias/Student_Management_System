@@ -9,6 +9,8 @@ const classController = require('../controllers/classController');
 const teacherController = require('../controllers/teacherController');
 const markController = require('../controllers/markController');
 const subjectController = require('../controllers/subjectController');
+const feesController = require('../controllers/feesController');
+const paymentController = require('../controllers/paymentController');
 
 //Auth routes
 router.post('/login', authController.login);
@@ -60,5 +62,16 @@ router.post('/searchSubject', authMiddleware.verifyAdminUser, subjectController.
 router.get('/getSubjects', authMiddleware.verifyAdminUser, subjectController.getSubjects);
 router.put('/editsubject/:id', authMiddleware.verifyAdminUser, subjectController.editSubject);
 router.delete('/deleteSubject/:id', authMiddleware.verifyAdminUser, subjectController.deleteSubject);
+
+//Fees routes
+router.post('/addFees', authMiddleware.verifyAdminUser, feesController.addFees);
+router.post('/searchFees', authMiddleware.verifyAdminUser, feesController.searchFees);
+router.put('/editFees/:id', authMiddleware.verifyAdminUser, feesController.editFees);
+router.delete('/deleteFees/:id', authMiddleware.verifyAdminUser, feesController.deleteFees);
+
+//Payment routes
+router.post('/addPayment', authMiddleware.verifyAdminUser, paymentController.addPayment);
+router.post('/searchPayment', authMiddleware.verifyAdminUser, paymentController.searchPayment);
+router.get('/getPayment/:id', authMiddleware.verifyAdminUser, paymentController.getStudentPayments);
 
 module.exports = router;

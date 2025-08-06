@@ -21,7 +21,7 @@ const classController = {
             const newClass = await Class.create({
                 name,
                 year,
-                subjectCount
+                subject_count: subjectCount
             });
 
             res.status(201).json({

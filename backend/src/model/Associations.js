@@ -17,14 +17,14 @@ GPA.belongsTo(Students, { foreignKey: 'student', as: 'studentGPA'});
 Avarage.belongsTo(Students, { foreignKey: 'student', as: 'studentAvarage'});
 Teachers.belongsTo(Class, { foreignKey: 'class', as: 'classTeacher'});
 StudentFees.belongsTo(Students, { foreignKey: 'student', as: 'studentTFees'});
-StudentFees.belongsTo(Fees, { foreignKey: 'fees', as: 'feesAmount'});
+//StudentFees.belongsTo(Fees, { foreignKey: 'fees', as: 'feesAmount'});
 
 Class.hasMany(Students, { foreignKey: "class", as: "studentClass"});
 Students.hasMany(Marks, { foreignKey: "student", as: "markStudent"});
 Subjects.hasMany(Marks, { foreignKey: "subject", as: "markSubject"});
 Students.hasMany(GPA, { foreignKey: "student", as: "gpaStudent"});
 Students.hasMany(Avarage, { foreignKey: "student", as: "avarageStudent"});
-Fees.hasMany(StudentFees, { foreignKey: "fees", as: "amountFees"});
+//Fees.hasMany(StudentFees, { foreignKey: "fees", as: "amountFees"});
 
 Class.hasOne(Fees, { foreignKey: "class", as: "feesClass"});
 Class.hasOne(Teachers, { foreignKey: "class", as: "teacherClass"});
