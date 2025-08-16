@@ -1,22 +1,27 @@
 import type { Metadata } from "next";
-import { Poppins, Jomhuria} from "next/font/google";
+import { Poppins } from "next/font/google";
+import localFont from "next/font/local"; // For Jomhuria fallback
 import "./globals.css";
-import { ToastContainer } from 'react-toastify';
 
 // Configure Poppins as the main font
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-poppins',
+  display: 'swap',
 });
 
-// Configure Jomhuria for headings
-const jomhuria = Jomhuria({
-  weight: '400',
-  subsets: ['latin'],
+// Local fallback for Jomhuria
+const jomhuria = localFont({
+  src: [
+    {
+      path: '../resource/fonts/Jomhuria-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    }
+  ],
   variable: '--font-jomhuria',
 });
-
 
 export const metadata: Metadata = {
   title: "SMS - Adventise International",
@@ -29,23 +34,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${poppins.variable} ${jomhuria.variable} antialiased`}
-      >
+    <html lang="en" className={`${poppins.variable} ${jomhuria.variable}`}>
+      <body className="font-sans antialiased">
         {children}
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </body>
     </html>
   );

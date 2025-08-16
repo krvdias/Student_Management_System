@@ -8,7 +8,7 @@ export interface refreshTokenData {
 }
 
 export interface LogoutData {
-    id: number;
+    id: string;
 }
 
 export interface RegisterData {
@@ -18,7 +18,16 @@ export interface RegisterData {
 }
 
 export interface eventData {
+    id: number;
     title: string;
     coordinator: string;
-    eventDate: string;
+    event_date: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface EventData {
+    title: string;
+    coordinator: string;
+    event_date: string;
 }

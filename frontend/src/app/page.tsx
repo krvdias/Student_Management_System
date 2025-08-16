@@ -7,8 +7,9 @@ import Image from 'next/image';
 import { logo } from '@/resource/logo';
 import { main } from '@/resource/image';
 import { adminLogin } from '@/service/adminRoutes';
-import { setAuthToken, setRefreshToken } from '@/utils/auth';
+import { setAuthToken, setRefreshToken, setUserName, setUserId } from '@/utils/auth';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ export default function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
-
+  const router = useRouter();
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -33,9 +34,12 @@ export default function Login() {
       const response = await adminLogin(formData);
 
       if (response.data && response.data.accessToken) {
+        setUserId(response.data.id);
+        setUserName(response.data.username);
         setAuthToken(response.data.accessToken);
         setRefreshToken(response.data.RefreshToken);
         toast.success('Successfully Login');
+        router.push('/Home');
         setIsSubmit(false);
       } else {
         toast.error('Invalid credentials. Please try again.');

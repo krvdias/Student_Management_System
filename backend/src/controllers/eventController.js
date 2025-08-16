@@ -8,7 +8,7 @@ const eventController = {
             const { title, coordinator, event_date } = req.body;
 
             if (!title || !event_date) {
-                return res.status(400).json({ message: "Title and event date are required fields." });
+                return res.status(400).json({ success: false, message: "Title and event date are required fields." });
             }
 
             // Create today's date at midnight UTC
@@ -18,11 +18,11 @@ const eventController = {
             // Parse the incoming event date as UTC
             const eventDate = new Date(event_date + "T00:00:00Z");
             if (isNaN(eventDate.getTime())) {
-                return res.status(400).json({ message: "Invalid date format." });
+                return res.status(400).json({ success: false, message: "Invalid date format." });
             }
 
             if (eventDate <= today) {
-                return res.status(400).json({ message: "Event date must be in the future." });
+                return res.status(400).json({ success: false, message: "Event date must be in the future." });
             }
 
             const event = await Events.create({
@@ -38,7 +38,7 @@ const eventController = {
             });
         } catch (error) {
             console.error('Event adding error:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     },
 
@@ -65,7 +65,7 @@ const eventController = {
             });
         } catch (error) {
             console.error('Error fetching events:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     },
 
@@ -77,7 +77,10 @@ const eventController = {
             // Check if the event exists
             const existingEvent = await Events.findByPk(id);
             if (!existingEvent) {
-                return res.status(404).json({ message: 'Event not found with this id' });
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Event not found with this id'
+                });
             }
 
             let eventDate;
@@ -89,14 +92,14 @@ const eventController = {
                 // Parse the incoming event date
                 eventDate = new Date(event_date);
                 if (isNaN(eventDate.getTime())) {
-                    return res.status(400).json({ message: "Invalid date format." });
+                    return res.status(400).json({ success: false, message: "Invalid date format." });
                 }
 
                 // Set time to midnight for comparison
                 eventDate.setHours(0, 0, 0, 0);
 
                 if (eventDate <= today) {
-                    return res.status(400).json({ message: "Event date must be in the future." });
+                    return res.status(400).json({ success: false, message: "Event date must be in the future." });
                 }
             }
 
@@ -108,7 +111,7 @@ const eventController = {
 
             // Check if at least one field is being updated
             if (Object.keys(updateData).length === 0) {
-                return res.status(400).json({ message: "No valid fields provided for update." });
+                return res.status(400).json({ success: false, message: "No valid fields provided for update." });
             }
 
             // Perform the update
@@ -117,7 +120,7 @@ const eventController = {
             });
 
             if (affectedRows === 0) {
-                return res.status(500).json({ message: "There is no update anthything" });
+                return res.status(500).json({ success: false, message: "There is no update anthything" });
             }
 
             // Fetch the updated event to return in response
@@ -131,7 +134,7 @@ const eventController = {
 
         } catch (error) {
             console.error('Error updating event:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
     },
 
@@ -142,7 +145,7 @@ const eventController = {
             // Check if the event exists
             const existingEvent = await Events.findByPk(id);
             if (!existingEvent) {
-                return res.status(404).json({ message: `Event not found with id` });
+                return res.status(404).json({ success: false, message: `Event not found with id` });
             }
 
             await Events.destroy({ where: {id} });

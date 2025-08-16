@@ -87,7 +87,10 @@ const authController = {
             admin.refresh_token = null;
             await admin.save();
 
-            res.json({ message: 'Logged out successfully' });
+            res.json({ 
+                success: true,
+                message: 'Logged out successfully'
+            });
         } catch (error) {
             console.error('Logout error:', error);
             res.status(500).json({ message: 'Internal server error' });

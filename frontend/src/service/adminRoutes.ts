@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -11,9 +11,9 @@ export const adminLogout = (data: LogoutData) => API.post('/admin/logout', data)
 export const summary = () => API.get('admin/summary');
 
 //Event Routes
-export const addEvent = (data: string) => API.post('/admin/addEvent', data);
+export const addEvent = (data: EventData) => API.post('/admin/addEvent', data);
 export const getEvents = () => API.get('/admin/getEvents');
-export const editEvent = (data: string, id: number) => API.put(`/admin/editEvent/${id}`, data);
+export const editEvent = (data: EventData, id: number) => API.put(`/admin/editEvent/${id}`, data);
 export const deleteEvent = (id: number) => API.delete(`/admin/deleteEvent/${id}`);
 
 //Student Routes
