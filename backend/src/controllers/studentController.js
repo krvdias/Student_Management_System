@@ -1,11 +1,16 @@
 const { Op } = require('sequelize');
 const Students = require('../model/StudentModel');
+const StudentFees = require('../model/StudentFeesModel');
+const GPA = require('../model/GPAModel');
+const Avarage = require('../model/AvarageModel');
+const Marks = require('../model/MarksModel');
 const Class = require('../model/ClassModel');
+const sequelize = require('../database/dbConnection');
 const { formatMobileNumber } = require('../utils/functions');
 
 const studentController = {
 
-        async addStudent(req, res) {
+    async addStudent(req, res) {
         try {
             const {firstName, lastName, dateOfBirth, address, gender, gardian, religion, mobile, thiredOrUpper, teacherChild, registerNo, addmissionDate, classes, leaveDate } = req.body;
 
@@ -32,6 +37,7 @@ const studentController = {
             const dob = new Date(dateOfBirth);
             const admission = new Date(addmissionDate);
             const leveDate = new Date(leaveDate);
+            let leaveDateValue = null;
 
             if (isNaN(dob.getTime())) {
                 return res.status(400).json({ message: "Invalid date of birth format" });
@@ -51,6 +57,8 @@ const studentController = {
                 return res.status(400).json({ 
                     message: "Leave date cannot be in the future" 
                 });
+            } else if (leveDate <= currentDate) {
+                leaveDateValue = leaveDate;
             }
 
             const newStudent = await Students.create({
@@ -67,7 +75,7 @@ const studentController = {
                 register_no: registerNo,
                 addmission_date: addmissionDate,
                 class: classes,
-                leave_date: leaveDate
+                leave_date: leaveDateValue
             });
 
             res.status(201).json({
@@ -268,23 +276,56 @@ const studentController = {
     },
 
     async deleteStudent(req, res) {
-        try {
-            const { id } = req.params;
+        const { id } = req.params;
+        const transaction = await sequelize.transaction(); // Start a transaction
 
-            const checkStudent = await Students.findByPk(id);
+        try {
+            const checkStudent = await Students.findByPk(id, { transaction });
             if (!checkStudent) {
+                await transaction.rollback();
                 return res.status(404).json({ message: 'Student not found with this id' });
             }
 
-            await Students.destroy({ where: { id } });
+            // Delete all related records first
+            await StudentFees.destroy({ 
+                where: { student: id },
+                transaction 
+            });
 
+            await GPA.destroy({
+                where: { student: id },
+                transaction
+            });
+
+            await Avarage.destroy({
+                where: { student: id },
+                transaction
+            });
+
+            await Marks.destroy({
+                where: { student: id },
+                transaction
+            });
+
+            // Finally delete the student
+            await Students.destroy({ 
+                where: { id },
+                transaction 
+            });
+
+            await transaction.commit(); // Commit if all operations succeed
             res.status(200).json({
                 success: true,
-                message: "Student deleted successfully"
+                message: "Student and all related records deleted successfully"
             });
         } catch (error) {
+            await transaction.rollback(); // Rollback if any error occurs
             console.error("Error deleting student:", error);
-            res.status(500).json({ success: false, message: "Failed to delete student" });
+            res.status(500).json({ 
+                success: false, 
+                message: "Failed to delete student and related records",
+                error: error.message 
+            });
         }
     }
 }

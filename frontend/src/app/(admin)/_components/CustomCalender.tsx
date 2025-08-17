@@ -1,7 +1,7 @@
 // components/CustomCalendar.tsx
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 
 interface CalendarProps {
@@ -10,14 +10,28 @@ interface CalendarProps {
     title: string;
     event_date: string;
   }[];
+  loading: boolean;
+  onLoadComplete?: () => void;
 }
 
-const CustomCalendar: React.FC<CalendarProps> = ({ events }) => {
+const CustomCalendar: React.FC<CalendarProps> = ({ events, loading, onLoadComplete }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+
+  useEffect(() => {
+    // Simulate calendar loading
+    if (!loading) {
+      const timer = setTimeout(() => {
+        onLoadComplete && onLoadComplete();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, onLoadComplete]);
+
+  if (loading) return null; // Let parent handle skeleton
 
   const renderHeader = () => {
     return (

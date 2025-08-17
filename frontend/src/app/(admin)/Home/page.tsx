@@ -21,6 +21,11 @@ export default function AdminDashboard() {
   const [eventToDelete, setEventToDelete] = useState<number | null>(null);
   const [studentsCount, setStudentCount] = useState('');
   const [teachersCount, setTeacherCount] = useState('');
+  const [loading, setLoading] = useState({
+    summary: true,
+    events: true,
+    calendar: true
+  });
   const [formData, setFormData] = useState({
     title: '',
     event_date: '',
@@ -36,6 +41,7 @@ export default function AdminDashboard() {
     try {
       const response = await getEvents();
       setEvents(response.data.data);
+      setLoading(prev => ({ ...prev, events: false }));
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -46,6 +52,8 @@ export default function AdminDashboard() {
       const response = await summary();
       setStudentCount(response.data.data.studentsCount);
       setTeacherCount(response.data.data.teachersCount);
+      setLoading(prev => ({ ...prev, summary: false }));
+      setLoading(prev => ({ ...prev, calendar: false }));
     } catch (error) {
       console.error('Error fetching summary:', error);
     }
@@ -281,41 +289,104 @@ export default function AdminDashboard() {
     </div>
   );
 
+    // Skeleton Components
+  const CardSkeleton = () => (
+    <div className="grid grid-cols-2 bg-white px-6 py-3 rounded-xl shadow border-3 border-yellow-400">
+      <div className='flex flex-col justify-center items-center'>
+        <div className="h-6 w-32 bg-gray-200 rounded mb-2"></div>
+        <div className="h-12 w-20 bg-gray-200 rounded"></div>
+      </div>
+      <div className='flex justify-end items-center'>
+        <div className="h-16 w-16 bg-gray-200 rounded-full"></div>
+      </div>
+    </div>
+  );
+
+  const EventItemSkeleton = () => (
+    <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 shadow-lg animate-pulse">
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <div className="h-5 w-40 bg-gray-200 rounded"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded"></div>
+          <div className="h-3 w-24 bg-gray-200 rounded"></div>
+        </div>
+        <div className="flex flex-col items-end space-y-2">
+          <div className="h-4 w-16 bg-gray-200 rounded"></div>
+          <div className="flex space-x-2">
+            <div className="h-5 w-5 bg-gray-200 rounded"></div>
+            <div className="h-5 w-5 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const CalendarSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="flex justify-between items-center mb-4">
+        <div className="h-8 w-40 bg-gray-200 rounded"></div>
+        <div className="flex space-x-2">
+          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {[...Array(7)].map((_, i) => (
+          <div key={i} className="h-8 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {[...Array(35)].map((_, i) => (
+          <div key={i} className="h-12 bg-gray-100 rounded"></div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Card section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8">
-        <div className="grid grid-cols-2 bg-white px-6 py-3 rounded-xl shadow border-3 border-yellow-400">
-          <div className='flex flex-col justify-center items-center'>
-            <p className="text-lg font-semibold text-black">Total Students</p>
-            <p className="text-5xl font-bold text-black">{studentsCount}</p>
-          </div>
-          <div className='flex justify-end items-center'>
-            <Image
-              src={studentsTotal}
-              height={70}
-              width={70}
-              alt='Total Students'
-              className="object-contain"
-            />
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 bg-white px-6 py-3 rounded-xl shadow border-3 border-yellow-400">
-          <div className='flex flex-col justify-center items-center'>
-            <p className="text-lg font-semibold text-black">Total Teachers</p>
-            <p className="text-5xl font-bold text-black">{teachersCount}</p>
-          </div>
-          <div className='flex justify-end items-center'>
-            <Image
-              src={teachersTotal}
-              height={70}
-              width={70}
-              alt='Total Teachers'
-              className="object-contain"
-            />
-          </div>
-        </div>
+        {loading.summary ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 bg-white px-6 py-3 rounded-xl shadow border-3 border-yellow-400">
+              <div className='flex flex-col justify-center items-center'>
+                <p className="text-lg font-semibold text-black">Total Students</p>
+                <p className="text-5xl font-bold text-black">{studentsCount}</p>
+              </div>
+              <div className='flex justify-end items-center'>
+                <Image
+                  src={studentsTotal}
+                  height={70}
+                  width={70}
+                  alt='Total Students'
+                  className="object-contain"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 bg-white px-6 py-3 rounded-xl shadow border-3 border-yellow-400">
+              <div className='flex flex-col justify-center items-center'>
+                <p className="text-lg font-semibold text-black">Total Teachers</p>
+                <p className="text-5xl font-bold text-black">{teachersCount}</p>
+              </div>
+              <div className='flex justify-end items-center'>
+                <Image
+                  src={teachersTotal}
+                  height={70}
+                  width={70}
+                  alt='Total Teachers'
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Main content with calendar and events */}
@@ -325,7 +396,11 @@ export default function AdminDashboard() {
           <p className='text-xl font-semibold mb-5'>Events</p>
           <div className='px-2 overflow-y-auto max-h-[calc(110vh-500px)]'>
             <div className='space-y-2 pr-2'>
-              {events.map((event) => (
+              {loading.events ? (
+                [...Array(3)].map((_, i) => (
+                  <EventItemSkeleton key={i} />
+                ))
+              ) : (events.map((event) => (
                 <div key={event.id} className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 shadow-lg">
                   <div className="flex justify-between items-start">
                     <div>
@@ -370,7 +445,8 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+              )}
             </div>
           </div>
 
@@ -386,9 +462,15 @@ export default function AdminDashboard() {
 
         {/* Calendar Section */}
         <div className="lg:col-span-1 px-10">
-          <CustomCalendar 
-            events={events} 
-          />
+          {loading.calendar ? (
+            <CalendarSkeleton />
+          ) : (
+            <CustomCalendar 
+              events={events} 
+              loading={loading.calendar}
+              onLoadComplete={() => setLoading(prev => ({...prev, calendar: false}))}
+            />
+          )}
         </div>
       </div>
 
