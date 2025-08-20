@@ -34,8 +34,20 @@ const teacherController = {
                 mobile: trimmedMobile,
                 email,
                 training: training || 'false',
-                class: classes || null
             });
+
+            if (classes) {
+                const classToUpdate = await Class.findOne({where: {id: classes} });
+
+                if (classToUpdate.teacher && classToUpdate.teacher !== null) {
+                    return res.status(409).json({ message: `This class already has a teacher` });
+                }
+
+                if (classToUpdate) {
+                    classToUpdate.teacher = newTeacher.id;
+                    await classToUpdate.save();
+                }
+            }
 
             res.status(201).json({
                 success: true,
@@ -64,20 +76,54 @@ const teacherController = {
                 };
             }
 
+            // First get all matching teachers
             const teachers = await Teachers.findAll({
                 where: whereCondition,
-                include: [{
-                    model: Class,
-                    as: 'classTeacher',  
-                    attributes: ['id', 'name', 'year'] 
-                }],
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                raw: true // Get plain objects instead of model instances
+            });
+
+            // Get teacher IDs
+            const teacherIds = teachers.map(teacher => teacher.id);
+
+            // Find all classes that have these teacher IDs
+            const classes = await Class.findAll({
+                where: {
+                    teacher: {
+                        [Op.in]: teacherIds
+                    }
+                },
+                raw: true
+            });
+
+            // Create a map of teacherId -> class for quick lookup
+            const teacherClassMap = {};
+            classes.forEach(classItem => {
+                teacherClassMap[classItem.teacher] = classItem;
+            });
+
+            // Combine teacher data with their class info
+            const teachersWithClasses = teachers.map(teacher => {
+                const classTeacher = teacherClassMap[teacher.id] || null;
+                return {
+                    ...teacher,
+                    // Convert training from 0/1 to false/true
+                    training: Boolean(teacher.training),
+                    class: classTeacher ? classTeacher.id : null,
+                    classTeacher: classTeacher 
+                        ? { 
+                            id: classTeacher.id,
+                            name: classTeacher.name,
+                            year: classTeacher.year
+                        } 
+                        : null
+                };
             });
 
             res.status(200).json({
                 success: true,
-                message: searchTerm ? "Teachers fetched with search term" : "All teachers feched",
-                data: teachers
+                message: searchTerm ? "Teachers fetched with search term" : "All teachers fetched",
+                data: teachersWithClasses
             });
         } catch (error) {
             console.error('Error fetching teachers:', error);
@@ -113,15 +159,6 @@ const teacherController = {
             if (email) updateTeacher.email = email;
             if (training) updateTeacher.training = training;
 
-            if (classes) {
-                const existingClass = await Class.findByPk(classes);
-                if (!existingClass) {
-                    return res.status(409).json({ message: `There is no any class in this id` });
-                }
-
-                updateTeacher.class = classes;
-            }
-
             if (Object.keys(updateTeacher).length === 0) {
                 return res.status(400).json({ message: "No valid fields provided for update." });
             }
@@ -135,6 +172,28 @@ const teacherController = {
             }
 
             const updatedTeacher = await Teachers.findByPk(id);
+
+            if (classes) {
+                const existingClass = await Class.findOne({where: {id: classes} });
+                if (!existingClass) {
+                    return res.status(409).json({ message: `There is no any class in this id` });
+                }
+
+                if (existingClass.teacher && existingClass.teacher !== null) {
+                    if (existingClass.teacher !== updatedTeacher.id) {
+                        return res.status(409).json({ message: `This class already has a teacher` });
+                    }
+                }
+
+                existingClass.teacher = updatedTeacher.id;
+                await existingClass.save();
+            } else {
+                const teacherClass = await Class.findOne({ where: { teacher: updatedTeacher.id } });
+                if (teacherClass) {
+                    teacherClass.teacher = null; // Remove the teacher from the class
+                    await teacherClass.save();
+                }
+            }
 
             res.status(200).json({
                 success: true,
@@ -154,6 +213,12 @@ const teacherController = {
             const checkTeacher = await Teachers.findByPk(id);
             if (!checkTeacher) {
                 return res.status(404).json({ message: 'Teacher not found with this id' });
+            }
+
+            const classToUpdate = await Class.findOne({ where: { teacher: id } });
+            if (classToUpdate) {
+                classToUpdate.teacher = null; // Remove the teacher from the class
+                await classToUpdate.save();
             }
 
             await Teachers.destroy({ where: { id } });

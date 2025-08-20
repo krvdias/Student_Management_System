@@ -1,27 +1,31 @@
+
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { getStudent, editStudent, deleteStudent, getClasses } from '@/service/adminRoutes'
 import { toast } from 'react-toastify'
 import { Student, ClassData } from '@/constants/types'
-import { FaEdit } from 'react-icons/fa'
+import { FiEdit } from 'react-icons/fi'
 import { FaTrash } from 'react-icons/fa'
 
 function Page() {
   const router = useRouter();
   const { id } = useParams();
   const [student, setStudent] = useState<Student | null>(null);
+  const [originalStudent, setOriginalStudent] = useState<Student | null>(null);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const hasChanges = useRef(false);
 
   const fetchData = async () => {
       try {
         const studentResponse = await getStudent(Number(id))
         if (studentResponse.data.success) {
           const apiData = studentResponse.data.data;
-          setStudent({
+          const formattedStudent = {
             ...apiData,
             firstName: apiData.first_name,
             lastName: apiData.last_name,
@@ -32,7 +36,10 @@ function Page() {
             thiredOrUpper: apiData.thired_or_upper,
             teacherChild: apiData.teacher_child,
             classes: apiData.class
-         })
+          };
+          setStudent(formattedStudent);
+          setOriginalStudent(JSON.parse(JSON.stringify(formattedStudent))); // Deep copy
+          hasChanges.current = false;
         }
         
         const classesResponse = await getClasses()
@@ -53,15 +60,31 @@ function Page() {
     const { name, value, type } = e.target
     const checked = (e.target as HTMLInputElement).checked
     
-    setStudent(prev => ({
-      ...prev!,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
+    setStudent(prev => {
+      if (!prev) return null;
+      
+      const newValue = type === 'checkbox' ? checked : value;
+      console.log(`Field changed: ${name}, Value: ${value}, Type: ${type}`); // Debug
+
+      
+
+      const newStudent = {
+        ...prev,
+        [name]: newValue
+      };
+      
+      // Compare with original student to detect changes
+      if (originalStudent) {
+        hasChanges.current = JSON.stringify(newStudent) !== JSON.stringify(originalStudent);
+      }
+      
+      return newStudent;
+    })
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!student) return
+    if (!student || !hasChanges.current) return
 
     setIsSubmitting(true)
     try {
@@ -78,7 +101,7 @@ function Page() {
     } finally {
       setIsSubmitting(false)
     }
-  }
+  };
 
   const handleDelete = async () => {
     if (!student) return
@@ -98,15 +121,15 @@ function Page() {
         setShowDeleteConfirm(false)
       }
     
-  }
+  };
 
   const handleBack = () => {
     router.push('/Students');
-}
+};
 
   if (!student) {
     return <div className="p-6">Loading...</div>
-  }
+  };
 
   const confirmDelete = async () => {
       await handleDelete();
@@ -158,7 +181,7 @@ function Page() {
                         name='firstName'
                         value={student.firstName}
                         onChange={handleChange}
-                        className='flex-1 px-3 py-2 text-sm font-semibold border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
+                        className='flex-1 px-3 py-1 text-lg font-semibold border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
                         aria-label='First Name'
                         required
                         />
@@ -171,7 +194,7 @@ function Page() {
                         name='lastName'
                         value={student.lastName}
                         onChange={handleChange}
-                        className='flex-1 px-3 py-2 text-sm font-semibold border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
+                        className='flex-1 px-3 py-1 text-lg font-semibold border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
                         aria-label='Last Name'
                         required
                         />
@@ -193,12 +216,16 @@ function Page() {
 
             <div className='grid grid-cols-2 gap-2'>
                 <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className='bg-[#1346DD] text-2xl text-white font-semibold px-3 py-3 rounded-lg hover:bg-blue-700 transition shadow-lg disabled:opacity-50'
-                    title='Edit Student'
+                  onClick={handleSubmit}
+                  disabled={!hasChanges.current || isSubmitting}
+                  className={`text-2xl text-white font-semibold px-3 py-3 rounded-lg transition shadow-lg ${
+                      !hasChanges.current || isSubmitting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-[#1346DD] hover:bg-blue-700'
+                  }`}
+                  title={!hasChanges.current ? 'No changes made' : isSubmitting ? 'Saving...' : 'Edit Student'}
                 >
-                    <FaEdit />
+                    <FiEdit className='w-6 h-6' />
                 </button>
                 <button
                     onClick={() => setShowDeleteConfirm(true)}
@@ -302,15 +329,15 @@ function Page() {
                 <label className='text-md font-medium w-48'>3rd or Upper :</label>
                 <select
                     name='thiredOrUpper'
-                    value={student.thiredOrUpper ? 'true' : 'false'}
+                    value={student.thiredOrUpper.toString()}
                     onChange={handleChange}
                     className='flex-1 px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
                     aria-label='3rd or Upper'
                     required
                 >
                     <option value=''>Select</option>
-                    <option value='true'>Yes</option>
-                    <option value='false'>No</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
                 </select>
             </div>
 
@@ -318,15 +345,15 @@ function Page() {
                 <label className='text-md font-medium w-48'>Teachers Child :</label>
                 <select
                     name='teacherChild'
-                    value={student.teacherChild ? 'true' : 'false'}
+                    value={student.teacherChild.toString()}
                     onChange={handleChange}
                     className='flex-1 px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none'
                     aria-label='Teachers Child'
                     required
                 >
                     <option value=''>Select</option>
-                    <option value='true'>Yes</option>
-                    <option value='false'>No</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
                 </select>
             </div>
 

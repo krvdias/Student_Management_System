@@ -103,6 +103,7 @@ const markController = {
             );
 
             return res.status(201).json({
+                success: true,
                 message: "Marks added successfully",
                 marks: addMarks,
                 gpa: newGPA,

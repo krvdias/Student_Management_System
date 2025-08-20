@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -31,17 +31,17 @@ export const editClass = (data: string, id: number) => API.put(`/admin/editClass
 export const deleteClass = (id: number) => API.delete(`/admin/deleteClass/${id}`);
 
 //Teacher Routes
-export const addTeacher = (data: string) => API.post('/admin/addTeacher', data);
+export const addTeacher = (data: TeacherData) => API.post('/admin/addTeacher', data);
 export const searchTeachers = (data: {searchTerm : string}) => API.post('/admin/searchTeachers', data);
-export const editTeacher = (data: string, id: number) => API.put(`/admin/editTeacher/${id}`, data);
+export const editTeacher = (data: TeacherData, id: number) => API.put(`/admin/editTeacher/${id}`, data);
 export const deleteTeacher = (id: number) => API.delete(`/admin/deleteTeacher/${id}`);
 
 //Mark Routes
-export const addMark = (data: string) => API.post('/admin/addMark', data);
+export const addMark = (data: MarkData) => API.post('/admin/addMark', data);
 export const addStudentMark = (data: string, id: number) => API.post(`/admin/addStudentMark/${id}`, data);
-export const markSummary = (data: string) => API.post('/admin/markSummery', data);
-export const getMarks = (data: string) => API.post(`/admin/getMarks`, data);
-export const getAllMarks = (data: string) => API.post(`/admin/getAllMarks`, data);
+export const markSummary = (data: {searchTerm : string}) => API.post('/admin/markSummery', data);
+export const getMarks = (data: {searchTerm : string}) => API.post(`/admin/getMarks`, data);
+export const getAllMarks = (data: {searchTerm : string}) => API.post(`/admin/getAllMarks`, data);
 export const editMark = (data: string, id: number) => API.put(`/admin/editMark/${id}`, data);
 export const deleteMark = (id: number) => API.delete(`/admin/deleteMark/${id}`);
 

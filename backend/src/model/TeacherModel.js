@@ -31,14 +31,6 @@ const Teachers = sequelize.define('Teachers', {
     training: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-    },
-    class: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'sms_class',
-            key: 'id'
-        }
     }
 }, {
     tableName: 'sms_teacher',

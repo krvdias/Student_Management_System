@@ -197,6 +197,7 @@ function Page() {
           </table>
         </div>
       </div>
+      
       {students.length > 0 && (
         <div className='hidden sm:flex-1 sm:flex sm:items-center sm:justify-between'>
           <div>

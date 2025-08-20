@@ -255,7 +255,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
                 <p className="text-xs text-gray-500">Student is first child for this school from his family</p>
                 <select
                   name="thiredOrUpper"
-                  value={formData.thiredOrUpper ? 'true' : 'false'}
+                  value={formData.thiredOrUpper.toString()}
                   onChange={handleInputChange}
                   className="w-full px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none"
                   aria-label='gender'
@@ -273,7 +273,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
                 <p className="text-xs text-gray-500">Students father or mother is a teacher of this school</p>
                 <select
                   name="teacherChild"
-                  value={formData.teacherChild ? 'true' : 'false'}
+                  value={formData.teacherChild.toString()}
                   onChange={handleInputChange}
                   className="w-full px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none"
                   aria-label='teacherChild'
@@ -311,13 +311,13 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2.5 text-sm font-medium bg-yellow-400 rounded-lg hover:bg-yellow-500 shadow-lg transition-colors"
+              className="w-full py-1.5 text-sm font-medium bg-yellow-400 rounded-lg hover:bg-yellow-500 shadow-lg transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-full py-2.5 text-sm font-medium bg-[#1346DD] text-white rounded-lg hover:bg-blue-800 shadow-lg transition-colors"
+              className="w-full py-1.5 text-sm font-medium bg-[#1346DD] text-white rounded-lg hover:bg-blue-800 shadow-lg transition-colors"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Saving...' : 'Save Student'}

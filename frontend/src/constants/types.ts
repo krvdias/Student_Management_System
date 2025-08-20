@@ -91,3 +91,63 @@ export interface ClassData {
   id: number;
   name: string;
 }
+
+export interface Teacher {
+  id: number;
+  first_name: string;
+  last_name: string;
+  address: string;
+  mobile: string;
+  email: string;
+  class: number | null;
+  training: boolean;
+}
+
+export interface TeacherData {
+  firstName: string;
+  lastName: string;
+  address: string;
+  mobile: string;
+  email: string;
+  classes: number | null;
+  training: boolean;
+}
+
+export interface Mark {
+  id: number;
+  first_name: string;
+  last_name: string;
+  register_no: string;
+  classStudent: ClassStudent;
+  performance: performance;
+}
+
+export interface performance {
+  gpa: gpa;
+  average: average;
+}
+
+export interface gpa {
+  value: string;
+  year: string;
+  term: string;
+}
+
+export interface average {
+  value: string;
+  year: string;
+  term: string;
+}
+
+export interface MarkData {
+  registerNo: string;
+  term: string;
+  subject: number | null;
+  marks: string;
+}
+
+export interface SubjectData {
+  id: number;
+  subject_id: string;
+  name: string;
+}

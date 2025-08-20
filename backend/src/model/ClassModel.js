@@ -19,6 +19,14 @@ const Class = sequelize.define('Class', {
     subject_count: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    teacher: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'sms_teacher',
+            key: 'id'
+        }
     }
 }, {
     tableName: 'sms_class',
