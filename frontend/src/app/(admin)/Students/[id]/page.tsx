@@ -124,7 +124,7 @@ function Page() {
   };
 
   const handleBack = () => {
-    router.push('/Students');
+    router.back();
 };
 
   if (!student) {

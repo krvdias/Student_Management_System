@@ -49,7 +49,7 @@ const AddMarkModal: React.FC<AddMarkModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-lg max-h-[100vh] overflow-y-auto">
+            <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-sm max-h-[100vh] overflow-y-auto">
                 <div className='flex justify-between items-center mb-2'>
                     <h2 className='text-2xl font-semibold'>{title}</h2>
                     <button 

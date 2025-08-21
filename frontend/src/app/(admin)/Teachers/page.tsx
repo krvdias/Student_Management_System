@@ -254,20 +254,20 @@ function Page() {
                     <td className='px-6 py-4 flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium'>
                       <button 
                         title='Edit'
-                        className='bg-[#1346DD] hover:bg-blue-700 text-white font-semibold px-3 py-3 rounded-lg transition shadow-lg' 
+                        className='bg-[#1346DD] hover:bg-blue-700 text-white font-semibold p-2 rounded-lg transition shadow-lg' 
                         onClick={() => handleEditClick(teacher)}
                       >
-                        <FiEdit />
+                        <FiEdit className="w-4 h-4"/>
                       </button>
                       <button 
                         title='Delete'
-                        className='bg-[#DD1313] hover:bg-red-700 text-white font-semibold px-3 py-3 rounded-lg transition shadow-lg' 
+                        className='bg-[#DD1313] hover:bg-red-700 text-white font-semibold p-2 rounded-lg transition shadow-lg' 
                         onClick={() => {
                           setTeacherToDelete(teacher.id);
                           setShowDeleteConfirm(true);
                         }}
                       >
-                        <FaTrash />
+                        <FaTrash className="w-4 h-4"/>
                       </button>
                     </td>
                   </tr>

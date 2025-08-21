@@ -99,9 +99,18 @@ function Page() {
     }
   };
 
-  const handleViewmark = (id: number) => {
-    if (id) {
-      router.push(`/Marks/${id}`);
+  const handleViewmark = (mark: Mark) => {
+    if (mark.id) {
+    // Create URLSearchParams for the query string
+      const params = new URLSearchParams({
+        firstName: mark.first_name || '',
+        lastName: mark.last_name || '',
+        registerNo: mark.register_no || '',
+        className: mark.classStudent?.name || ''
+      });
+      
+      // Use template string with query parameters
+      router.push(`/Marks/${mark.id}?${params.toString()}`);
     }
   };
 
@@ -157,10 +166,10 @@ function Page() {
                     <td className='px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'>
                       {mark.classStudent?.name}
                     </td>
-                    <td className='px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'>{mark.performance.average?.value || 'Not available'}</td>
-                    <td className='px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900 capitalize'>{mark.performance.gpa?.value || 'Not available'}</td>
+                    <td className='px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900'>{mark.performance.average?.value ? parseFloat(mark.performance.average.value).toFixed(2) : 'Not available'}</td>
+                    <td className='px-6 py-4 text-center whitespace-nowrap text-sm text-gray-900 capitalize'>{mark.performance.gpa?.value ? parseFloat(mark.performance.gpa.value).toFixed(2) : 'Not available'}</td>
                     <td className='px-6 py-4 flex items-center justify-center whitespace-nowrap text-right text-sm font-medium'>
-                      <button title='view' className='text-black text-lg font-bold' onClick={() => handleViewmark(mark.id)}>
+                      <button title='view' className='text-black text-lg font-bold' onClick={() => handleViewmark(mark)}>
                         <FaEllipsisH />
                       </button>
                     </td>

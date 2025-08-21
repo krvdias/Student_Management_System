@@ -151,3 +151,17 @@ export interface SubjectData {
   subject_id: string;
   name: string;
 }
+
+export interface MarkRequest {
+  searchTerm: string;
+  id: number | null;
+}
+
+export interface MarkResponse {
+  id: number;
+  marks: string;
+  grade: string;
+  term: string;
+  year: string;
+  subject: SubjectData;
+}

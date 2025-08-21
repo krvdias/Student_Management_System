@@ -209,6 +209,7 @@ const markController = {
             );
 
             return res.status(201).json({
+                success: true,
                 message: "Marks added successfully",
                 marks: addMarks,
                 gpa: newGPA,
@@ -615,6 +616,7 @@ const markController = {
             const updatedMark = await Marks.findByPk(id); 
 
             return res.status(201).json({
+                success: true,
                 message: "Marks update successfully",
                 marks: updatedMark,
             });

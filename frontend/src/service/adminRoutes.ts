@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -40,9 +40,9 @@ export const deleteTeacher = (id: number) => API.delete(`/admin/deleteTeacher/${
 export const addMark = (data: MarkData) => API.post('/admin/addMark', data);
 export const addStudentMark = (data: string, id: number) => API.post(`/admin/addStudentMark/${id}`, data);
 export const markSummary = (data: {searchTerm : string}) => API.post('/admin/markSummery', data);
-export const getMarks = (data: {searchTerm : string}) => API.post(`/admin/getMarks`, data);
-export const getAllMarks = (data: {searchTerm : string}) => API.post(`/admin/getAllMarks`, data);
-export const editMark = (data: string, id: number) => API.put(`/admin/editMark/${id}`, data);
+export const getMarks = (data: MarkRequest) => API.post(`/admin/getMarks`, data);
+export const getAllMarks = (data: MarkRequest) => API.post(`/admin/getAllMarks`, data);
+export const editMark = (data: MarkData, id: number) => API.put(`/admin/editMark/${id}`, data);
 export const deleteMark = (id: number) => API.delete(`/admin/deleteMark/${id}`);
 
 //Subjects Routes
