@@ -54,7 +54,7 @@ const classController = {
                 include: [
                     {
                         model: Teachers,
-                        as: 'teacherClass',  // Using the association alias
+                        as: 'classTeacher',  // Using the association alias
                         attributes: ['id', 'first_name', 'last_name'],
                         required: false // Left join to include classes without teachers
                     }
@@ -69,9 +69,10 @@ const classController = {
                 id: classItem.id,
                 name: classItem.name,
                 year: classItem.year,
-                teacher: classItem.teacherClass ? {
-                    id: classItem.teacherClass.id,
-                    name: `${classItem.teacherClass.first_name} ${classItem.teacherClass.last_name}`
+                subjectCount: classItem.subject_count,
+                teacher: classItem.classTeacher ? {
+                    id: classItem.classTeacher.id,
+                    name: `${classItem.classTeacher.first_name} ${classItem.classTeacher.last_name}`
                 } : null
             }));
 

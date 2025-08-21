@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest, ClassForm } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -24,10 +24,10 @@ export const editStudent = (data: StudentData, id: number) => API.put(`/admin/ed
 export const deleteStudent = (id: number) => API.delete(`/admin/deleteStudent/${id}`);
 
 //Class Routes
-export const addClass = (data: string) => API.post('/admin/addClass', data);
+export const addClass = (data: ClassForm) => API.post('/admin/addClass', data);
 export const searchClass = (data: {searchTerm : string}) => API.post('/admin/searchClass', data);
 export const getClasses = () => API.get(`/admin/getClasses`);
-export const editClass = (data: string, id: number) => API.put(`/admin/editClass/${id}`, data);
+export const editClass = (data: ClassForm, id: number) => API.put(`/admin/editClass/${id}`, data);
 export const deleteClass = (id: number) => API.delete(`/admin/deleteClass/${id}`);
 
 //Teacher Routes

@@ -15,7 +15,7 @@ Marks.belongsTo(Students, { foreignKey: 'student', as: 'studentMark'});
 Marks.belongsTo(Subjects, { foreignKey: 'subject', as: 'subjectMark'});
 GPA.belongsTo(Students, { foreignKey: 'student', as: 'studentGPA'});
 Avarage.belongsTo(Students, { foreignKey: 'student', as: 'studentAvarage'});
-Teachers.belongsTo(Class, { foreignKey: 'class', as: 'classTeacher'});
+Class.belongsTo(Teachers, { foreignKey: 'teacher', as: 'classTeacher'});
 StudentFees.belongsTo(Students, { foreignKey: 'student', as: 'studentTFees'});
 //StudentFees.belongsTo(Fees, { foreignKey: 'fees', as: 'feesAmount'});
 
@@ -27,7 +27,7 @@ Students.hasMany(Avarage, { foreignKey: "student", as: "avarageStudent"});
 //Fees.hasMany(StudentFees, { foreignKey: "fees", as: "amountFees"});
 
 Class.hasOne(Fees, { foreignKey: "class", as: "feesClass"});
-Class.hasOne(Teachers, { foreignKey: "class", as: "teacherClass"});
+Teachers.hasOne(Class, { foreignKey: "teacher", as: "teacherClass"});
 Students.hasOne(StudentFees, { foreignKey: "student", as: "feesTStudent"});
 
 module.exports = {Students, Teachers, Class, Subjects, Marks, GPA, Avarage, Fees, StudentFees};

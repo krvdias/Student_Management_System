@@ -165,3 +165,22 @@ export interface MarkResponse {
   year: string;
   subject: SubjectData;
 }
+
+export interface Classes {
+  id: number;
+  name: string;
+  year: string;
+  subjectCount: number;
+  teacher: Teachers;
+}
+
+export interface ClassForm {
+  name: string;
+  year: string;
+  subjectCount: number;
+}
+
+export interface Teachers {
+  id: number;
+  name: string;
+}
