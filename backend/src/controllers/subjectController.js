@@ -41,8 +41,8 @@ const subjectController = {
             if (searchTerm && searchTerm.trim() !== "") {
                 whereCondition = {
                     [Op.or]: [
-                        { name: { [Op.like]: `%${searchTerm}` }},
-                        { subject_id: { [Op.like]: `%${searchTerm}` }},
+                        { name: { [Op.like]: `%${searchTerm}%` }},
+                        { subject_id: { [Op.like]: `%${searchTerm}%` }},
                     ]
                 };
             }

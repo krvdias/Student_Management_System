@@ -221,7 +221,7 @@ function ClassesComponent() {
                                     <th className='px-6 py-3 text-center text-sm font-medium text-black tracking-wider'>Year</th>
                                     <th className='px-6 py-3 text-center text-sm font-medium text-black tracking-wider'>Teacher</th>
                                     <th className='px-6 py-3 text-center text-sm font-medium text-black tracking-wider'>Subject Count</th>
-                                    <th className='px-6 py-3 text-center text-sm font-medium text-black tracking-wider'>Actions</th>
+                                    <th className='px-6 py-3 text-center text-sm font-medium text-black tracking-wider'></th>
                                 </tr>
                             </thead>
                             <tbody className='bg-white divide-y divide-gray-200'>
@@ -365,7 +365,7 @@ function ClassesComponent() {
                         />
                     </div>
 
-                    <div className="flex flex-col gap-3 pt-4 mt-5">
+                    <div className="flex flex-col gap-3 pt-4 mt-10">
                         <button
                             type="button"
                             onClick={handleCancel}

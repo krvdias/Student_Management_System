@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest, ClassForm } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest, ClassForm, SubjectForm } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -46,10 +46,10 @@ export const editMark = (data: MarkData, id: number) => API.put(`/admin/editMark
 export const deleteMark = (id: number) => API.delete(`/admin/deleteMark/${id}`);
 
 //Subjects Routes
-export const addSubject = (data: string) => API.post('/admin/addSubject', data);
+export const addSubject = (data: SubjectForm) => API.post('/admin/addSubject', data);
 export const searchSubject = (data: {searchTerm : string}) => API.post('/admin/searchSubject', data);
 export const getSubjects = () => API.get(`/admin/getSubjects`);
-export const editSubject = (data: string, id: number) => API.put(`/admin/editSubject/${id}`, data);
+export const editSubject = (data: SubjectForm, id: number) => API.put(`/admin/editSubject/${id}`, data);
 export const deleteSubject = (id: number) => API.delete(`/admin/deleteSubject/${id}`);
 
 //Fees Routes

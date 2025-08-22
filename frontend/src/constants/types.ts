@@ -152,6 +152,11 @@ export interface SubjectData {
   name: string;
 }
 
+export interface SubjectForm {
+  subjectId: string;
+  name: string;
+}
+
 export interface MarkRequest {
   searchTerm: string;
   id: number | null;

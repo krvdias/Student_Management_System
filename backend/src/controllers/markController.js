@@ -153,6 +153,17 @@ const markController = {
                 return res.status(409).json({ message: `student, year, term and subject already exist` });
             }
 
+            const existingSubjectCount = await Marks.count({
+                where: {
+                    student: id,
+                    year: currentYear,
+                    term: term
+                }
+            });
+            if (existingSubjectCount >= subjectCount) {
+                return res.status(409).json({ message: `This students class this ${currentYear} year ${term} subject count exeeded. Please check class subject count` });
+            }
+
             // Find or create GPA record
             let [gpaRecord, gpaCreated] = await GPA.findOrCreate({
                 where: {
