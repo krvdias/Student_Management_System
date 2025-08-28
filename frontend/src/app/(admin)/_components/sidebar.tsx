@@ -26,7 +26,7 @@ function Sidebar() {
   return (
     <aside className="w-64 bg-[#09358B] shadow-sm">
       <div className="h-full overflow-y-auto">
-        <nav className="px-4 py-6">
+        <nav className="px-4 py-10">
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const active = isActive(item.path);

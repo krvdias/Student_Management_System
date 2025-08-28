@@ -1,5 +1,6 @@
 const Fees = require('../model/FeesModel');
 const Class = require('../model/ClassModel');
+const Student = require('../model/StudentModel');
 const { Op } = require('sequelize');
 
 const feesController = {
@@ -14,7 +15,12 @@ const feesController = {
 
             const existingClass = await Class.findByPk(classes);
             if(!existingClass) {
-                return res.status(404).json({ Message: "There is no class in this id"})
+                return res.status(404).json({ message: "There is no class in this id"})
+            }
+
+            const existingFees = await Fees.findOne({ where: {class: classes} });
+            if (existingFees) {
+                return res.status(409).json({ message: "This class fees already existed"})
             }
 
             if (amount <= 0) {
@@ -64,6 +70,30 @@ const feesController = {
             res.status(200).json({
                 success: true,
                 message: searchTerm ? "Fees fetch with searchterm" : "All fees fetched",
+                data: fees
+            });
+        } catch (error) {
+            console.error('Error fetching fees:', error);
+            res.status(500).json({ 
+                success: false,
+                message: 'Internal server error',
+                error: error.message 
+            });
+        }
+    },
+
+    async getFees(req, res) {
+        try {
+            const {id} = req.params;
+
+            const student = await Student.findByPk(id);
+            const classes = student.class;
+
+            const fees = await Fees.findOne({where: {class: classes}});
+
+            res.status(200).json({
+                success: true,
+                message: "Fees get for student class",
                 data: fees
             });
         } catch (error) {

@@ -1,4 +1,4 @@
-import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest, ClassForm, SubjectForm } from "@/constants/types";
+import { LoginData, LogoutData, refreshTokenData, RegisterData, EventData, StudentData, TeacherData, MarkData, MarkRequest, ClassForm, SubjectForm, FeesForm, PaymentForm } from "@/constants/types";
 import API from "./APIs";
 
 //Auth Routes
@@ -53,12 +53,13 @@ export const editSubject = (data: SubjectForm, id: number) => API.put(`/admin/ed
 export const deleteSubject = (id: number) => API.delete(`/admin/deleteSubject/${id}`);
 
 //Fees Routes
-export const addFees = (data: string) => API.post('/admin/addFees', data);
+export const addFees = (data: FeesForm) => API.post('/admin/addFees', data);
 export const searchFees = (data: {searchTerm : string}) => API.post('/admin/searchFees', data);
-export const editFees = (data: string, id: number) => API.put(`/admin/editFees/${id}`, data);
+export const getFees = (id: number) => API.get(`/admin/getFees/${id}`);
+export const editFees = (data: FeesForm, id: number) => API.put(`/admin/editFees/${id}`, data);
 export const deleteFees = (id: number) => API.delete(`/admin/deleteFees/${id}`);
 
 //Payment Fees Routes
-export const addPayment = (data: string) => API.post('/admin/addPayment', data);
+export const addPayment = (data: PaymentForm) => API.post('/admin/addPayment', data);
 export const searchPayment = (data: {searchTerm : string}) => API.post('/admin/searchPayment', data);
-export const getPayment = (id: number) => API.get(`/admin/getPayment/${id}`);
+export const getPayment = (id: number | null) => API.get(`/admin/getPayment/${id}`);

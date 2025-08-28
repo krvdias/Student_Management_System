@@ -66,6 +66,7 @@ router.delete('/deleteSubject/:id', authMiddleware.verifyAdminUser, subjectContr
 //Fees routes
 router.post('/addFees', authMiddleware.verifyAdminUser, feesController.addFees);
 router.post('/searchFees', authMiddleware.verifyAdminUser, feesController.searchFees);
+router.get('/getFees/:id', authMiddleware.verifyAdminUser, feesController.getFees);
 router.put('/editFees/:id', authMiddleware.verifyAdminUser, feesController.editFees);
 router.delete('/deleteFees/:id', authMiddleware.verifyAdminUser, feesController.deleteFees);
 

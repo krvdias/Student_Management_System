@@ -189,3 +189,62 @@ export interface Teachers {
   id: number;
   name: string;
 }
+
+export interface FeesData {
+  id: number;
+  class: number | null;
+  amount: string;
+  classFees: ClassData;
+}
+
+export interface FeesForm {
+  classes: number | null;
+  amount: string;
+}
+
+export interface PaymentData {
+  id: number;
+  term: string;
+  bill_id: string;
+  payed_date: string;
+  fees: string;
+  method: string;
+  status: string;
+  studentTFees: studentTFees;
+}
+
+export interface studentTFees {
+  id: number;
+  first_name: string;
+  last_name: string;
+  register_no: string;
+}
+
+export interface PaymentForm {
+  student: number | null;
+  billId: string;
+  term: string;
+  method: string;
+  discount: number
+}
+
+export interface PayData {
+  id: number;
+  first_name: string;
+  last_name: string;
+  register_no: string;
+  religion: string;
+  thired_or_upper: boolean;
+  teacher_child: boolean;
+  feesTStudent: feesTStudent;
+}
+
+interface feesTStudent {
+  id: number;
+  term: string;
+  bill_id: string;
+  payed_date: string;
+  fees: number;
+  method: string;
+  status: string;
+}

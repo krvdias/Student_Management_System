@@ -334,13 +334,13 @@ function ClassesComponent() {
                         <label className="block text-sm font-medium">
                             Year*
                         </label>
-                        <p className="text-xs text-gray-500">which years students in this class</p>
+                        <p className="text-xs text-gray-500">which years old students in this class</p>
                         <input
                             type="text"
                             name="year"
                             value={formData.year}
                             onChange={handleInputChange}
-                            placeholder="Which years students in this class"
+                            placeholder="Which years old students in this class"
                             className="w-full px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none"
                             required
                             disabled={isSubmitting}
