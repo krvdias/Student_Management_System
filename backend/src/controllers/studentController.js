@@ -91,7 +91,7 @@ const studentController = {
 
     async fetchStudents(req, res) {
         try {
-            const { searchTerm } = req.body;
+            const { searchTerm, classId } = req.body;
             
             let whereCondition = {};
             
@@ -102,6 +102,14 @@ const studentController = {
                         { last_name: { [Op.like]: `%${searchTerm}%` } },
                         { register_no: { [Op.like]: `%${searchTerm}%` } }
                     ]
+                };
+            }
+
+            // Handle class ID if provided
+            if (classId) {
+                whereCondition = {
+                    ...whereCondition,
+                    class: classId
                 };
             }
 

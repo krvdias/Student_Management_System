@@ -236,10 +236,10 @@ export interface PayData {
   religion: string;
   thired_or_upper: boolean;
   teacher_child: boolean;
-  feesTStudent: feesTStudent;
+  feesTStudent: feesTStudent[];
 }
 
-interface feesTStudent {
+export interface feesTStudent {
   id: number;
   term: string;
   bill_id: string;

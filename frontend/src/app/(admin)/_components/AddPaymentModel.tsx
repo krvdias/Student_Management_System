@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { PaymentForm, PayData } from '@/constants/types'
+import { PaymentForm, PayData, feesTStudent } from '@/constants/types'
 import { getPayment, getFees } from '@/service/adminRoutes'
 
 interface AddPaymentModalProps {
@@ -25,12 +25,13 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   isAddMode,
   studentId
 }) => {
-    const [payments, setPayments] = useState<PayData[]>([]);
+    const [payments, setPayments] = useState<feesTStudent[]>([]);
     const [studentData, setStudentData] = useState<PayData | null>(null);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState<number>(0);
+    const [discountedAmount, setDiscountedAmount] = useState<number>(0);
     const itemsPerPage = 3;
 
     const fetchPayments = async (studentId: number | null) => {
@@ -40,11 +41,8 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
             setLoading(true)
             const response = await getPayment(studentId);
             if (response.data.success) {
-                setPayments(response.data.data);
-                // Set the first payment as student data (assuming it contains student info)
-                if (response.data.data.length > 0) {
-                    setStudentData(response.data.data[0]);
-                }
+                setStudentData(response.data.data);
+                setPayments(response.data.data.feesTStudent || []);
                 setTotalPages(Math.ceil(response.data.data.length / itemsPerPage))
                 setCurrentPage(1) 
             } 
@@ -55,11 +53,53 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
         }
     };
 
+    const fetchAmount = async (studentId: number | null) => {
+        if (!studentId) return;
+
+        try {
+            const responce = await getFees(studentId);
+            if (responce.data.success) {
+                const feeAmount = responce.data.data.amount || 0;
+                setAmount(parseFloat(feeAmount));
+                setDiscountedAmount(parseFloat(feeAmount)); // Initialize with full amount
+            }
+        } catch (error) {
+            console.error('Error fetching fee:', error);
+            setAmount(0);
+            setDiscountedAmount(0);
+        }
+    };
+
     useEffect(() => {
         if (isOpen && studentId) {
             fetchPayments(studentId);
+            fetchAmount(studentId);
         }
     }, [isOpen, studentId]);
+
+    // Calculate discounted amount when discount changes
+    useEffect(() => {
+        if (amount > 0 && formData.discount) {
+            const discountValue = parseFloat(formData.discount.toString());
+            const discountAmount = (amount * discountValue) / 100;
+            setDiscountedAmount(amount - discountAmount);
+        } else {
+            setDiscountedAmount(amount);
+        }
+    }, [formData.discount, amount]);
+
+    const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleInputChange(e);
+        
+        // Also update discounted amount in real-time
+        if (amount > 0 && e.target.value) {
+            const discountValue = parseFloat(e.target.value);
+            const discountAmount = (amount * discountValue) / 100;
+            setDiscountedAmount(amount - discountAmount);
+        } else {
+            setDiscountedAmount(amount);
+        }
+    };
 
     const paginatedPayments = payments.slice(
         (currentPage - 1) * itemsPerPage,
@@ -72,10 +112,10 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
         
         const elements = [];
         
-        if (studentData.religion) {
+        if (studentData.religion === "Adventis" || studentData.religion === "adventis") {
             elements.push(
                 <span key="religion" className="text-blue-600 font-medium">
-                    {studentData.religion}
+                    Adventis
                 </span>
             );
         }
@@ -127,18 +167,37 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                     </button>
                 </div>
 
-                {studentData && (
-                    <>
-                        <div className='flex items-center mt-3'>
-                            <label className='text-sm font-medium w-40'>Student Reg No:</label>
-                            <p className='text-sm '>{studentData.register_no}</p>
+                <div className='flex justify-between items-start'>
+                    {/* Student Info */}
+                    {studentData && (
+                        <div>
+                            <div className='flex items-center mt-3'>
+                                <label className='text-sm font-medium w-40'>Student Reg No:</label>
+                                <p className='text-sm '>{studentData.register_no}</p>
+                            </div>
+                            <div className='flex items-center gap-2 mb-3'>
+                                <label className='text-sm font-medium w-38'>Name:</label>
+                                <p className='text-sm'>{studentData.first_name} {studentData.last_name}</p>
+                            </div>
                         </div>
-                        <div className='flex items-center gap-2 mb-3'>
-                            <label className='text-sm font-medium w-38'>Name:</label>
-                            <p className='text-sm'>{studentData.first_name} {studentData.last_name}</p>
+                    )}
+                    
+                    {/* Fee Amount Preview */}
+                    <div className='bg-yellow-100 p-3 rounded-xl border border-yellow-300'>
+                        <div className='text-sm font-medium text-gray-700'>Fee Amount:</div>
+                        <div className='text-2xl font-bold'>
+                            Rs. {typeof discountedAmount === 'number' ? discountedAmount.toFixed(2) : '0.00'}
                         </div>
-                    </>
-                )}
+                        {formData.discount && parseFloat(formData.discount.toString()) > 0 && (
+                            <div className='text-xs text-green-600 mt-1'>
+                                After {formData.discount}% discount
+                                {amount > 0 && (
+                                    <span> (Original: Rs. {amount.toFixed(2)})</span>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 <form onSubmit={onSubmit}>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
@@ -215,7 +274,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                                 min="0"
                                 max="100"
                                 value={formData.discount || ''}
-                                onChange={handleInputChange}
+                                onChange={handleDiscountChange}
                                 className="w-full px-3 py-1 text-sm border-3 border-yellow-400 rounded-lg focus:ring-0 focus:border-yellow-500 focus:outline-none"
                                 placeholder="Discount percentage"
                                 required
@@ -265,31 +324,31 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                                 ) : paginatedPayments.length > 0 ? (
                                 paginatedPayments.map((payment) => (
                                     <tr key={payment.id} className='hover:bg-gray-50'>
-                                        <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900'>{payment.feesTStudent.term}</td>
+                                        <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900'>{payment.term}</td>
                                         <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900'>
-                                            {payment.feesTStudent.bill_id || 'Not Available'}
+                                            {payment.bill_id || 'Not Available'}
                                         </td>
                                         <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900'>
-                                            {payment.feesTStudent.payed_date ? new Date(payment.feesTStudent.payed_date).toLocaleDateString() : 'Not Available'}
+                                            {payment.payed_date ? new Date(payment.payed_date).toLocaleDateString() : 'Not Available'}
                                         </td>
                                         <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900'>
-                                            {payment.feesTStudent.fees ? `Rs. ${payment.feesTStudent.fees}` : 'Not Available'}
+                                            {payment.fees ? `Rs. ${payment.fees}` : 'Not Available'}
                                         </td>
                                         <td className='px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900 capitalize'>
-                                            {payment.feesTStudent.method || 'Not Available'}
+                                            {payment.method || 'Not Available'}
                                         </td>
                                         <td className='px-4 py-3 text-center whitespace-nowrap text-sm font-medium'>
-                                            {payment.feesTStudent.status ? (
+                                            {payment.status ? (
                                                 <span className={`px-3 py-2 rounded-xl text-xs font-medium capitalize ${
-                                                payment.feesTStudent.status.toLowerCase() === 'paid' 
+                                                payment.status.toLowerCase() === 'paid' 
                                                     ? 'bg-green-200 text-green-800' 
-                                                    : payment.feesTStudent.status.toLowerCase() === 'pending' 
+                                                    : payment.status.toLowerCase() === 'pending' 
                                                     ? 'bg-yellow-200 text-yellow-800' 
-                                                    : payment.feesTStudent.status.toLowerCase() === 'not paid' || payment.feesTStudent.status.toLowerCase() === 'not payed'
+                                                    : payment.status.toLowerCase() === 'not paid' || payment.status.toLowerCase() === 'not payed'
                                                         ? 'bg-red-200 text-red-800'
                                                         : 'bg-gray-100 text-gray-800'
                                                 }`}>
-                                                {payment.feesTStudent.status.toUpperCase()}
+                                                {payment.status.toUpperCase()}
                                                 </span>
                                             ) : (
                                                 <span className="text-gray-500">Not Available</span>

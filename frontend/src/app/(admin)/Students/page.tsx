@@ -2,9 +2,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { FaSearch, FaEllipsisH } from 'react-icons/fa'
-import { addStudent, searchStudents } from '@/service/adminRoutes'
-import { Student } from '@/constants/types'
+import { FaSearch, FaEllipsisH, FaChevronDown } from 'react-icons/fa'
+import { addStudent, searchStudents, getClasses } from '@/service/adminRoutes'
+import { Student, ClassData } from '@/constants/types'
 import { toast } from 'react-toastify'
 import AddStudentModal from '../_components/AddStudentModel'
 import { useRouter } from 'next/navigation'
@@ -13,10 +13,12 @@ function Page() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [classId, setClassId] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isAddMode, setIsAddMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [classes, setClasses] = useState<ClassData[]>([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,10 +38,10 @@ function Page() {
   const itemsPerPage = 8;
   const router = useRouter();
 
-  const fetchStudents = async (term: string = '') => {
+  const fetchStudents = async (term: string = '', classId: string = '') => {
     try {
       setLoading(true)
-      const response = await searchStudents({ searchTerm: term })
+      const response = await searchStudents({ searchTerm: term, classId: classId })
       if (response.data.success) {
         setStudents(response.data.data)
         setTotalPages(Math.ceil(response.data.data.length / itemsPerPage))
@@ -52,14 +54,29 @@ function Page() {
     }
   };
 
+  const fetchClasses = async () => {
+    try {
+      const response = await getClasses();
+      if (response.data.success) {
+        setClasses(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  },[]);
+
   // Initial fetch and real-time search with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchStudents(searchTerm)
+      fetchStudents(searchTerm, classId)
     }, 500) // Debounce delay of 500ms
 
     return () => clearTimeout(timer)
-  }, [searchTerm]);
+  }, [searchTerm, classId]);
 
   const paginatedStudents = students.slice(
     (currentPage - 1) * itemsPerPage,
@@ -135,15 +152,37 @@ function Page() {
           ADD STUDENT
         </button>
 
-        <div className='relative flex-grow max-w-xs'>
-          <FaSearch className='absolute left-3 top-2.5 text-black' />
-          <input
-            type='text'
-            placeholder='Search Students...'
-            className='w-full pl-10 pr-3 py-1.5 border-3 border-yellow-400 rounded-xl focus:outline-none focus:ring-0 text-sm shadow-lg'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        {/* Combined Filter Group */}
+        <div className='flex items-center gap-2 bg-white rounded-xl border-3 border-yellow-400 shadow-lg'>
+          {/* Class Filter Dropdown */}
+          <div className='relative'>
+            <select
+              className='w-full px-4 py-1.5 focus:outline-none focus:ring-0 text-sm appearance-none pr-8 border-r border-gray-300'
+              value={classId}
+              onChange={(e) => setClassId(e.target.value)}
+              aria-label='classId'
+            >
+              <option value="">All Classes</option>
+              {classes.map((cls) => (
+                <option key={cls.id} value={cls.id}>
+                  {cls.name}
+                </option>
+              ))}
+            </select>
+            <FaChevronDown className='absolute right-2 top-2.5 text-gray-500 text-xs pointer-events-none' />
+          </div>
+
+          {/* Search Input */}
+          <div className='relative flex items-center'>
+            <FaSearch className='text-black ml-2' />
+            <input
+              type='text'
+              placeholder='Search Students...'
+              className='w-full pl-2 pr-3 py-1.5 focus:outline-none focus:ring-0 text-sm'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 

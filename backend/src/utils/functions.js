@@ -209,15 +209,16 @@ export function calculateFees(amount, discount) {
 export function checkCurrentTerm() {
     const today = new Date();
     const month = today.getMonth() + 1; // JavaScript months are 0-indexed (0-11)
+    const year = today.getFullYear();
     
-    if (month >= 9 && month <= 12) { // September - December
-        return "1st Term";
-    } else if (month >= 1 && month <= 4) { // January - April
-        return "2nd Term";
-    } else if (month >= 5 && month <= 8) { // May - August
-        return "3rd Term";
+    if (month >= 9 && month <= 12) {
+        return { term: "1st Term", year: year };
+    } else if (month >= 1 && month <= 4) {
+        return { term: "2nd Term", year: year };
+    } else if (month >= 5 && month <= 8) {
+        return { term: "3rd Term", year: year };
     } else {
         // This shouldn't happen as all months are covered, but just in case
-        return "Unknown Term";
+        return { term: "Unknown Term", year: year };
     }
 }

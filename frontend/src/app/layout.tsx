@@ -1,15 +1,6 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import localFont from "next/font/local"; // For Jomhuria fallback
 import "./globals.css";
-
-// Configure Poppins as the main font
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
-  display: 'swap',
-});
 
 // Local fallback for Jomhuria
 const jomhuria = localFont({
@@ -21,6 +12,33 @@ const jomhuria = localFont({
     }
   ],
   variable: '--font-jomhuria',
+});
+
+// Local Poppins with all weights
+const poppins = localFont({
+  src: [
+    {
+      path: '../resource/fonts/Poppins-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../resource/fonts/Poppins-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../resource/fonts/Poppins-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../resource/fonts/Poppins-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {

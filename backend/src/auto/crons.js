@@ -9,7 +9,8 @@ function startPaymentStatusCronJob() {
         try {
             console.log("Auto-checking current term and updating payment statuses for next term...");
 
-            const currentTerm = checkCurrentTerm();
+            const currentTermInfo = checkCurrentTerm();
+            const currentTerm = currentTermInfo.term;
             const termsOrder = ["1st Term", "2nd Term", "3rd Term"];
             const currentTermIndex = termsOrder.indexOf(currentTerm);
 
@@ -34,7 +35,7 @@ function startPaymentStatusCronJob() {
                     console.log('No payment record exists at all create record');
                     await StudentFees.create({
                         student: student.id,
-                        term: currentTerm,
+                        term: currentTerm.term,
                         status: 'pending'
                     });
                     continue;
@@ -64,7 +65,7 @@ function startPaymentStatusCronJob() {
                 }
 
                 // Case 5: Latest payment is for previous term but pending - update to 'not paid'
-                if (latestPayment.term !== currentTerm && latestPayment.status === 'pending') {
+                if (latestPayment.term !== currentTerm.term && latestPayment.status === 'pending') {
                     console.log("Latest payment is for previous term but pending - update to 'not paid'")
                     await latestPayment.update({
                         status: 'not paid'

@@ -77,10 +77,10 @@ const paymentController = {
             }
 
             // If no unpaid record found for requested term, check if it's current term
-            if (term !== currentTerm) {
+            if (term !== currentTerm.term) {
                 return res.status(400).json({ 
                     success: false,
-                    message: `No unpaid record found for ${term}. Payment can only be made for current term (${currentTerm}) or existing unpaid terms.`
+                    message: `No unpaid record found for ${term}. Payment can only be made for current term (${currentTerm.term}) or existing unpaid terms.`
                 });
             }
 
@@ -88,7 +88,7 @@ const paymentController = {
             const currentTermPayment = await StudentFees.findOne({
                 where: {
                     student: student,
-                    term: currentTerm,
+                    term: currentTerm.term,
                     status: "paid"
                 }
             });
@@ -102,7 +102,7 @@ const paymentController = {
 
             // Check previous terms payment status (only for current term payments)
             const termsOrder = ["1st Term", "2nd Term", "3rd Term"];
-            const currentTermIndex = termsOrder.indexOf(currentTerm);
+            const currentTermIndex = termsOrder.indexOf(currentTerm.term);
             
             if (currentTermIndex > 0) {
                 const previousTerm = termsOrder[currentTermIndex - 1];
@@ -119,7 +119,7 @@ const paymentController = {
                     previousTermPayment.createdAt.getFullYear() === new Date().getFullYear()) {
                     return res.status(400).json({
                         success: false,
-                        message: "You have not paid previous term fees. Please pay that first."
+                        message: `You have not paid ${previousTerm} fees. Please pay that first.`
                     });
                 }
             }
@@ -130,7 +130,7 @@ const paymentController = {
                 bill_id: billId,
                 fees: finalFee,
                 method,
-                term: currentTerm,
+                term: currentTerm.term,
                 status: "paid",
                 payed_date: new Date()
             });
@@ -219,10 +219,22 @@ const paymentController = {
                 attributes: ['id','first_name','last_name','register_no','religion','thired_or_upper','teacher_child']
             });
 
+            // Extract student data from first payment (all should have the same student)
+            const studentData = student.length > 0 ? {
+                id: student[0].id,
+                first_name: student[0].first_name,
+                last_name: student[0].last_name,
+                register_no: student[0].register_no,
+                religion: student[0].religion,
+                thired_or_upper: student[0].thired_or_upper,
+                teacher_child: student[0].teacher_child,
+                feesTStudent: student.map(student => student.feesTStudent)
+            } : null;
+
             res.status(200).json({
                 success: true,
                 message: "Payement data found",
-                data: student
+                data: studentData
             });
         } catch (error) {
             console.error('Payment fetch error:', error);

@@ -18,7 +18,7 @@ export const deleteEvent = (id: number) => API.delete(`/admin/deleteEvent/${id}`
 
 //Student Routes
 export const addStudent = (data: StudentData) => API.post('/admin/addStudent', data);
-export const searchStudents = (data: {searchTerm : string}) => API.post('/admin/fetchStudents', data);
+export const searchStudents = (data: {searchTerm : string, classId : string}) => API.post('/admin/fetchStudents', data);
 export const getStudent = (id: number) => API.get(`/admin/getStudent/${id}`);
 export const editStudent = (data: StudentData, id: number) => API.put(`/admin/editStudent/${id}`, data);
 export const deleteStudent = (id: number) => API.delete(`/admin/deleteStudent/${id}`);

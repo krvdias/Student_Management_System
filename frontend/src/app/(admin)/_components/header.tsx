@@ -51,8 +51,8 @@ function Header() {
         </div>
 
         {/* Center: Title */}
-        <h1 className="text-6xl font-semibold text-blue-900 uppercase">
-          Admin Dashboard
+        <h1 className="text-6xl text-blue-900 uppercase">
+          Student Management System
         </h1>
 
         {/* Right: Icons */}
